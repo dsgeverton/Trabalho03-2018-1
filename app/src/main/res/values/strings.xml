@@ -1,7 +1,15 @@
 <resources>
-    <string name="app_name">Trabalho03-2018-1</string>
+    <string name="app_name">Trabalho0320181</string>
     <string name="oficina">Oficina</string>
     <string name="mec_nico">Mecânico</string>
     <string name="entrar">Entrar</string>
     <string name="msgmain">Escolha o que Visualizar</string>
+    <string name="txtnome">Nome:</string>
+    <string name="txtrua">Rua:</string>
+    <string name="rua_aleatoria">Rua Aleatória</string>
+    <string name="nome_aleatorio">Nome Aleatório</string>
+    <string name="funcao">Função</string>
+    <string name="funcao_aleatoria">Função Aleatória</string>
+    <string name="oficinas_disponiveis">Oficinas Disponíveis</string>
+    <string name="mecanicos">Mecânicos</string>
 </resources>

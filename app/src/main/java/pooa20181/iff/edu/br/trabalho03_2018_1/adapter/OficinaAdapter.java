@@ -29,8 +29,7 @@ public class OficinaAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.cardview_oficina, parent, false);
-        OficinaViewHolder oficinaViewHolder = new OficinaViewHolder(view);
-        return oficinaViewHolder;
+        return new OficinaViewHolder(view);
     }
 
     @Override
@@ -46,10 +45,10 @@ public class OficinaAdapter extends RecyclerView.Adapter {
         return oficinas.size();
     }
 
-    public class OficinaViewHolder extends RecyclerView.ViewHolder {
+    private class OficinaViewHolder extends RecyclerView.ViewHolder {
         private final TextView nomeOficina;
         private final TextView ruaOficina;
-        public OficinaViewHolder(View itemView) {
+        private OficinaViewHolder(View itemView) {
             super(itemView);
             nomeOficina = itemView.findViewById(R.id.tvNomeOficina);
             ruaOficina = itemView.findViewById(R.id.tvRuaOficina);

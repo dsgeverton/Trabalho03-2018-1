@@ -28,8 +28,7 @@ public class MecanicoAdapter extends RecyclerView.Adapter{
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(context).inflate(R.layout.cardview_mecanico, parent, false);
-        MecanicoAdapter.MecanicoViewHolder mecanicoViewHolder = new MecanicoViewHolder(view);
-        return mecanicoViewHolder;
+        return new MecanicoViewHolder(view);
     }
 
     @Override
@@ -45,10 +44,10 @@ public class MecanicoAdapter extends RecyclerView.Adapter{
         return mecanicos.size();
     }
 
-    public class MecanicoViewHolder extends RecyclerView.ViewHolder {
+    private class MecanicoViewHolder extends RecyclerView.ViewHolder {
         private final TextView nomeMecanico;
         private final TextView funcaoMecanico;
-        public MecanicoViewHolder(View itemView) {
+        private MecanicoViewHolder(View itemView) {
             super(itemView);
             nomeMecanico = itemView.findViewById(R.id.tvNomeMecanico);
             funcaoMecanico = itemView.findViewById(R.id.tvFuncaoMecanico);
