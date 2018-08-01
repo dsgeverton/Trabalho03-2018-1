@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey;
 public class Oficina extends RealmObject implements Serializable{
 
     @PrimaryKey
-    private int id;
+    private String id;
     private String nome;
     private String rua;
     private String bairro;
@@ -17,7 +17,7 @@ public class Oficina extends RealmObject implements Serializable{
 
     public Oficina() {}
 
-    public Oficina(int id, String nome, String rua, String bairro, String municipio, String latitude, String longitude) {
+    public Oficina(String id, String nome, String rua, String bairro, String municipio, String latitude, String longitude) {
         this.id = id;
         this.nome = nome;
         this.rua = rua;
@@ -27,10 +27,10 @@ public class Oficina extends RealmObject implements Serializable{
         this.longitude = longitude;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -26,7 +26,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
         setContentView(R.layout.activity_mecanico);
 
         realm = Realm.getDefaultInstance();
-        FloatingActionButton fab = findViewById(R.id.fabMecanico);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMecanico);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,7 +37,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
         });
     }
     private List<Mecanico> getMecanicos(){
-        return realm.where(Mecanico.class).findAll();
+        return (List) realm.where(Mecanico.class).findAll();
     }
     @Override
     public void onClick(Object object) {
@@ -56,6 +56,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
     }
     @Override
     public void finish(){
+        super.finish();
         realm.close();
     }
 }

@@ -21,15 +21,15 @@ public class OficinaActivity extends AppCompatActivity implements ClickRecyclerV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mecanico);
+        setContentView(R.layout.activity_oficina);
 
         realm = Realm.getDefaultInstance();
-        FloatingActionButton fab = findViewById(R.id.fabOficina);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabOficina);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(OficinaActivity.this, OficinaDetalhesActivity.class);
-                intent.putExtra("id",0);
+                intent.putExtra("id","0");
                 startActivity(intent);
             }
         });
@@ -58,6 +58,7 @@ public class OficinaActivity extends AppCompatActivity implements ClickRecyclerV
 
     @Override
     public void finish(){
+        super.finish();
         realm.close();
     }
 }
