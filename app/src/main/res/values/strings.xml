@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Trabalho03-2018-1</string>
+    <string name="oficina">Oficina</string>
+    <string name="mec_nico">Mecânico</string>
+    <string name="entrar">Entrar</string>
+    <string name="msgmain">Escolha o que Visualizar</string>
 </resources>
