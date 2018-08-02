@@ -66,7 +66,7 @@
             android:id="@+id/linearMecanico"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <EditText
@@ -99,9 +99,9 @@
                 android:id="@+id/editTextInfoDataNascimentoMecanico"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:ems="10"
                 android:hint="@string/data_de_nascimento"
                 android:inputType="date"
                 android:textAlignment="center" />
@@ -118,8 +118,7 @@
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/edtTextinfoBairroMecanico"
@@ -133,8 +132,7 @@
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/edtTextInfoMunicipioMecanico"
@@ -149,12 +147,11 @@
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/edtTextInfoLatitudeMecanico"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
@@ -164,12 +161,11 @@
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/edtTextInfoLongitudeMecanico"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
@@ -180,29 +176,22 @@
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent" />
 
-            <com.google.android.gms.maps.MapView
-                android:id="@+id/mapa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/buttonSalvarMecanico"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:padding="20dp"
+                android:text="@string/salvar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.502"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="503dp" />
 
         </LinearLayout>
     </ScrollView>
-
-    <Button
-        android:id="@+id/buttonSalvarMecanico"
-        android:layout_width="137dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:padding="20dp"
-        android:text="@string/salvar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

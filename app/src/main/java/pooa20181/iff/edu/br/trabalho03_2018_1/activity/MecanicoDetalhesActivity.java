@@ -136,21 +136,9 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonSalvarMecanico) {
-
-            if (mViewHolder.nomeMecanico.getText().toString().equals("") ||
-                    mViewHolder.ruaMecanico.getText().toString().equals("") ||
-                    mViewHolder.funcaoMecanico.getText().toString().equals("") ||
-                    mViewHolder.dataNascimentoMecanico.getText().toString().equals("") ||
-                    mViewHolder.bairroMecanico.getText().toString().equals("") ||
-                    mViewHolder.municipioMecanico.getText().toString().equals("") ||
-                    mViewHolder.latitudeMecanico.getText().toString().equals("") ||
-                    mViewHolder.longitudeMecanico.getText().toString().equals("")) {
-                Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
-            } else {
                 buscar();
                 atualizar();
                 finish();
-            }
         }
 
         if (id == R.id.excluirMecanico) {
@@ -187,35 +175,46 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
 
     public void atualizar() {
 
-        String token;
-        realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if (mViewHolder.nomeMecanico.getText().toString().equals("") ||
+                mViewHolder.ruaMecanico.getText().toString().equals("") ||
+                mViewHolder.funcaoMecanico.getText().toString().equals("") ||
+                mViewHolder.dataNascimentoMecanico.getText().toString().equals("") ||
+                mViewHolder.bairroMecanico.getText().toString().equals("") ||
+                mViewHolder.municipioMecanico.getText().toString().equals("") ||
+                mViewHolder.latitudeMecanico.getText().toString().equals("") ||
+                mViewHolder.longitudeMecanico.getText().toString().equals("")) {
+            Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
+        } else {
+            String token;
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
 
-        if (idMecanico.equals("0")) {
-            mecanico = realm.where(Mecanico.class).equalTo("id", idMecanico).findFirst();
-            if (mecanico == null) {
-                token = getRandomHexString();
-                mecanico = new Mecanico();
-                mecanico.setId(token);
+            if (idMecanico.equals("0")) {
+                mecanico = realm.where(Mecanico.class).equalTo("id", idMecanico).findFirst();
+                if (mecanico == null) {
+                    token = getRandomHexString();
+                    mecanico = new Mecanico();
+                    mecanico.setId(token);
+                }
             }
-        }
 
-        mecanico.setNome(mViewHolder.nomeMecanico.getText().toString());
-        mecanico.setFuncao(mViewHolder.funcaoMecanico.getText().toString());
-        try {
-            mecanico.setDataNascimento(maskData.parse(mViewHolder.dataNascimentoMecanico.getText().toString()));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        mecanico.setRua(mViewHolder.ruaMecanico.getText().toString());
-        mecanico.setBairro(mViewHolder.bairroMecanico.getText().toString());
-        mecanico.setMunicipio(mViewHolder.municipioMecanico.getText().toString());
-        mecanico.setLatitude(mViewHolder.latitudeMecanico.getText().toString());
-        mecanico.setLongitude(mViewHolder.longitudeMecanico.getText().toString());
+            mecanico.setNome(mViewHolder.nomeMecanico.getText().toString());
+            mecanico.setFuncao(mViewHolder.funcaoMecanico.getText().toString());
+            try {
+                mecanico.setDataNascimento(maskData.parse(mViewHolder.dataNascimentoMecanico.getText().toString()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            mecanico.setRua(mViewHolder.ruaMecanico.getText().toString());
+            mecanico.setBairro(mViewHolder.bairroMecanico.getText().toString());
+            mecanico.setMunicipio(mViewHolder.municipioMecanico.getText().toString());
+            mecanico.setLatitude(mViewHolder.latitudeMecanico.getText().toString());
+            mecanico.setLongitude(mViewHolder.longitudeMecanico.getText().toString());
 
-        realm.copyToRealmOrUpdate(mecanico);
-        realm.commitTransaction();
-        realm.close();
+            realm.copyToRealmOrUpdate(mecanico);
+            realm.commitTransaction();
+            realm.close();
+        }
     }
 
     private void excluir() {

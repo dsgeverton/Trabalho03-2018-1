@@ -71,6 +71,8 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
         this.mViewHolder.excluir = findViewById(R.id.excluirOficina);
         this.mViewHolder.habilitarEdicao = findViewById(R.id.switchHabilitarEdicaoOficina);
 
+        mViewHolder.latitudeOficina.setEnabled(false);
+        mViewHolder.longitudeOficina.setEnabled(false);
         this.mViewHolder.excluir.setOnClickListener(this);
         this.mViewHolder.salvar.setOnClickListener(this);
 
@@ -91,15 +93,14 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     mViewHolder.nomeOficina.setEnabled(true);
                     mViewHolder.ruaOficina.setEnabled(true);
                     mViewHolder.bairroOficina.setEnabled(true);
                     mViewHolder.municipioOficina.setEnabled(true);
-                    mViewHolder.latitudeOficina.setEnabled(true);
-                    mViewHolder.longitudeOficina.setEnabled(true);
                     mViewHolder.salvar.setEnabled(true);
                 } else {
+
                     buscar();
                     atualizar();
                     povoate();
@@ -107,8 +108,6 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
                     mViewHolder.ruaOficina.setEnabled(false);
                     mViewHolder.bairroOficina.setEnabled(false);
                     mViewHolder.municipioOficina.setEnabled(false);
-                    mViewHolder.latitudeOficina.setEnabled(false);
-                    mViewHolder.longitudeOficina.setEnabled(false);
                     mViewHolder.salvar.setEnabled(false);
                 }
             }
@@ -124,19 +123,9 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonSalvarOficina){
-
-            if(     mViewHolder.nomeOficina.getText().toString().equals("") ||
-                    mViewHolder.ruaOficina.getText().toString().equals("") ||
-                    mViewHolder.bairroOficina.getText().toString().equals("") ||
-                    mViewHolder.municipioOficina.getText().toString().equals("") ||
-                    mViewHolder.latitudeOficina.getText().toString().equals("") ||
-                    mViewHolder.longitudeOficina.getText().toString().equals("")){
-                Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
-            } else{
-                buscar();
-                atualizar();
-                finish();
-            }
+            buscar();
+            atualizar();
+            finish();
         }
 
         if (id == R.id.excluirOficina){
@@ -155,8 +144,6 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
             mViewHolder.ruaOficina.setEnabled(false);
             mViewHolder.bairroOficina.setEnabled(false);
             mViewHolder.municipioOficina.setEnabled(false);
-            mViewHolder.latitudeOficina.setEnabled(false);
-            mViewHolder.longitudeOficina.setEnabled(false);
             mViewHolder.salvar.setEnabled(false);
 
             mViewHolder.nomeOficina.setText(oficina.getNome());
@@ -171,29 +158,36 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
     public void atualizar() {
 
-        String token;
-        realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
+        if(     mViewHolder.nomeOficina.getText().toString().equals("") ||
+                mViewHolder.ruaOficina.getText().toString().equals("") ||
+                mViewHolder.bairroOficina.getText().toString().equals("") ||
+                mViewHolder.municipioOficina.getText().toString().equals("")) {
+            Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
+        } else {
+            String token;
+            realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
 
-        if (idOficina.equals("0")) {
-            oficina = realm.where(Oficina.class).equalTo("id", idOficina).findFirst();
-            if (oficina == null) {
-                token = getRandomHexString();
-                oficina = new Oficina();
-                oficina.setId(token);
+            if (idOficina.equals("0")) {
+                oficina = realm.where(Oficina.class).equalTo("id", idOficina).findFirst();
+                if (oficina == null) {
+                    token = getRandomHexString();
+                    oficina = new Oficina();
+                    oficina.setId(token);
+                }
             }
+
+            oficina.setNome(mViewHolder.nomeOficina.getText().toString());
+            oficina.setRua(mViewHolder.ruaOficina.getText().toString());
+            oficina.setBairro(mViewHolder.bairroOficina.getText().toString());
+            oficina.setMunicipio(mViewHolder.municipioOficina.getText().toString());
+            oficina.setLatitude(mViewHolder.latitudeOficina.getText().toString());
+            oficina.setLongitude(mViewHolder.longitudeOficina.getText().toString());
+
+            realm.copyToRealmOrUpdate(oficina);
+            realm.commitTransaction();
+            realm.close();
         }
-
-        oficina.setNome(mViewHolder.nomeOficina.getText().toString());
-        oficina.setRua(mViewHolder.ruaOficina.getText().toString());
-        oficina.setBairro(mViewHolder.bairroOficina.getText().toString());
-        oficina.setMunicipio(mViewHolder.municipioOficina.getText().toString());
-        oficina.setLatitude(mViewHolder.latitudeOficina.getText().toString());
-        oficina.setLongitude(mViewHolder.longitudeOficina.getText().toString());
-
-        realm.copyToRealmOrUpdate(oficina);
-        realm.commitTransaction();
-        realm.close();
     }
 
     private void excluir() {
