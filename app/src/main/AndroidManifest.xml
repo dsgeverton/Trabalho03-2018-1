@@ -21,6 +21,7 @@
         <activity android:name=".activity.OficinaActivity" />
         <activity android:name=".activity.MecanicoDetalhesActivity" />
         <activity android:name=".activity.OficinaDetalhesActivity"></activity>
+        <activity android:name=".util.GeoLocation" />
     </application>
 
 </manifest>

@@ -31,7 +31,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MecanicoActivity.this, MecanicoDetalhesActivity.class);
-                intent.putExtra("id",0);
+                intent.putExtra("id","0"                                                 );
                 startActivity(intent);
             }
         });
