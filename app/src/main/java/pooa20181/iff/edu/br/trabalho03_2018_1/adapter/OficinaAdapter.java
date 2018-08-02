@@ -15,7 +15,7 @@ public class OficinaAdapter extends RecyclerView.Adapter {
 
     private List<Oficina> oficinas;
     private Context context;
-    private static ClickRecyclerViewListener clickRecyclerViewListener;
+    private ClickRecyclerViewListener clickRecyclerViewListener;
 
     public OficinaAdapter(List<Oficina> oficinas, Context context, ClickRecyclerViewListener clickRecyclerViewListener) {
         this.oficinas = oficinas;

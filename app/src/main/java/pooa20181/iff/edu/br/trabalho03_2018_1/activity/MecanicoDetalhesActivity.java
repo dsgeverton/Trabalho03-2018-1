@@ -1,12 +1,20 @@
 package pooa20181.iff.edu.br.trabalho03_2018_1.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -17,23 +25,42 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Random;
+
 import io.realm.Realm;
 import pooa20181.iff.edu.br.trabalho03_2018_1.R;
 import pooa20181.iff.edu.br.trabalho03_2018_1.model.Mecanico;
-import pooa20181.iff.edu.br.trabalho03_2018_1.util.GeoLocation;
+import pooa20181.iff.edu.br.trabalho03_2018_1.util.PermissionUtils;
 
-public class MecanicoDetalhesActivity extends AppCompatActivity implements View.OnClickListener{
+public class MecanicoDetalhesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
     private ViewHolder mViewHolder = new ViewHolder();
     private Realm realm;
     private Mecanico mecanico;
     private String idMecanico;
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat maskData = new SimpleDateFormat("dd/MM/yyyy");
+
+    private GoogleApiClient googleApiClient;
+    private FusedLocationProviderClient mFusedLocationClient;
+
+    // permissions
+    String[] permissoes = new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +81,14 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
         this.mViewHolder.excluir = findViewById(R.id.excluirMecanico);
         this.mViewHolder.habilitarEdicao = findViewById(R.id.switchHabilitarEdicaoMecanico);
 
+        mViewHolder.latitudeMecanico.setEnabled(false);
+        mViewHolder.longitudeMecanico.setEnabled(false);
         this.mViewHolder.excluir.setOnClickListener(this);
         this.mViewHolder.salvar.setOnClickListener(this);
 
         Intent intent = getIntent();
         idMecanico = (String) intent.getSerializableExtra("id");
-        if (idMecanico.equals("0"))
-        {
+        if (idMecanico.equals("0")) {
             this.mViewHolder.habilitarEdicao.setVisibility(View.INVISIBLE);
             this.mViewHolder.habilitarEdicao.setActivated(false);
             this.mViewHolder.habilitarEdicao.setSplitTrack(false);
@@ -74,17 +102,16 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked){
+                if (isChecked) {
                     mViewHolder.nomeMecanico.setEnabled(true);
                     mViewHolder.funcaoMecanico.setEnabled(true);
                     mViewHolder.dataNascimentoMecanico.setEnabled(true);
                     mViewHolder.ruaMecanico.setEnabled(true);
                     mViewHolder.bairroMecanico.setEnabled(true);
                     mViewHolder.municipioMecanico.setEnabled(true);
-                    mViewHolder.latitudeMecanico.setEnabled(true);
-                    mViewHolder.longitudeMecanico.setEnabled(true);
                     mViewHolder.salvar.setEnabled(true);
                 } else {
+                    buscar();
                     atualizar();
                     povoate();
                     mViewHolder.nomeMecanico.setEnabled(false);
@@ -93,35 +120,40 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
                     mViewHolder.ruaMecanico.setEnabled(false);
                     mViewHolder.bairroMecanico.setEnabled(false);
                     mViewHolder.municipioMecanico.setEnabled(false);
-                    mViewHolder.latitudeMecanico.setEnabled(false);
-                    mViewHolder.longitudeMecanico.setEnabled(false);
                     mViewHolder.salvar.setEnabled(false);
                 }
             }
         });
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        callConnection();
+        PermissionUtils.validate(this, 0, permissoes);
+
+        googleApiClient.connect();
     }
 
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.buttonSalvarMecanico){
+        if (id == R.id.buttonSalvarMecanico) {
 
-            if(     mViewHolder.nomeMecanico.getText().toString().equals("") ||
+            if (mViewHolder.nomeMecanico.getText().toString().equals("") ||
                     mViewHolder.ruaMecanico.getText().toString().equals("") ||
                     mViewHolder.funcaoMecanico.getText().toString().equals("") ||
                     mViewHolder.dataNascimentoMecanico.getText().toString().equals("") ||
                     mViewHolder.bairroMecanico.getText().toString().equals("") ||
                     mViewHolder.municipioMecanico.getText().toString().equals("") ||
                     mViewHolder.latitudeMecanico.getText().toString().equals("") ||
-                    mViewHolder.longitudeMecanico.getText().toString().equals("")){
+                    mViewHolder.longitudeMecanico.getText().toString().equals("")) {
                 Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
-            } else{
+            } else {
+                buscar();
                 atualizar();
                 finish();
             }
         }
 
-        if (id == R.id.excluirMecanico){
+        if (id == R.id.excluirMecanico) {
             excluir();
         }
     }
@@ -132,15 +164,13 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
         mecanico = realm.where(Mecanico.class).equalTo("id", idMecanico).findFirst();
         realm.close();
 
-        if (!idMecanico.equals("0")){
+        if (!idMecanico.equals("0")) {
             mViewHolder.nomeMecanico.setEnabled(false);
             mViewHolder.funcaoMecanico.setEnabled(false);
             mViewHolder.dataNascimentoMecanico.setEnabled(false);
             mViewHolder.ruaMecanico.setEnabled(false);
             mViewHolder.bairroMecanico.setEnabled(false);
             mViewHolder.municipioMecanico.setEnabled(false);
-            mViewHolder.latitudeMecanico.setEnabled(false);
-            mViewHolder.longitudeMecanico.setEnabled(false);
             mViewHolder.salvar.setEnabled(false);
 
             mViewHolder.nomeMecanico.setText(mecanico.getNome());
@@ -183,11 +213,6 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
         mecanico.setLatitude(mViewHolder.latitudeMecanico.getText().toString());
         mecanico.setLongitude(mViewHolder.longitudeMecanico.getText().toString());
 
-        Address localizacao = new GeoLocation().location(mViewHolder.ruaMecanico.getText().toString());
-
-        mecanico.setLatitude(String.valueOf(localizacao.getLatitude()));
-        mecanico.setLongitude(String.valueOf(localizacao.getLongitude()));
-
         realm.copyToRealmOrUpdate(mecanico);
         realm.commitTransaction();
         realm.close();
@@ -210,7 +235,7 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
                 }).setNegativeButton("Não", null).show();
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         EditText nomeMecanico, funcaoMecanico, dataNascimentoMecanico, ruaMecanico, bairroMecanico, municipioMecanico, latitudeMecanico, longitudeMecanico;
         Button salvar;
         Switch habilitarEdicao;
@@ -219,15 +244,133 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements View.
         LinearLayout linear;
     }
 
-    public String getRandomHexString(){
+    public String getRandomHexString() {
         int numchars = 6;
         Random r = new Random();
         StringBuilder sb = new StringBuilder();
-        while(sb.length() < numchars){
+        while (sb.length() < numchars) {
             sb.append(Integer.toHexString(r.nextInt()));
         }
         return sb.toString().substring(0, numchars);
     }
 
+    private synchronized void callConnection() {
+        Log.i("LOG", "callConnection()");
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addOnConnectionFailedListener(this)
+                .addConnectionCallbacks(this)
+                .addApi(LocationServices.API)
+                .build();
+
+    }
+
+    private void buscar() {
+
+        if ((mViewHolder.latitudeMecanico.getText() == null) &&
+                (mViewHolder.longitudeMecanico.getText() == null) &&
+                (mViewHolder.ruaMecanico.getText() == null)) {
+            Toast.makeText(this, "Existem campos em branco!", Toast.LENGTH_LONG).show();
+
+        } else {
+            Log.i("LOG", "Criando busca");
+
+            StringBuilder resultAddress = new StringBuilder();
+
+            try {
+                Address endereco = getEndereco(mViewHolder.ruaMecanico.getText().toString());
+                Log.i("LOG", "Atualizar " + endereco.getThoroughfare());
+
+                for (int i = 0, tam = endereco.getMaxAddressLineIndex(); i < tam; i++) {
+                    resultAddress.append(endereco.getAddressLine(i));
+                    resultAddress.append(i < tam - 1 ? ", " : "");
+                    Log.i("LOG", "Result " + resultAddress);
+                }
+                mViewHolder.ruaMecanico.setText(endereco.getThoroughfare());
+                mViewHolder.municipioMecanico.setText(endereco.getSubAdminArea());
+                mViewHolder.latitudeMecanico.setText(String.valueOf(endereco.getLatitude()));
+                mViewHolder.longitudeMecanico.setText(String.valueOf(endereco.getLongitude()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public Address getEndereco(String streetName) throws IOException {
+
+        Geocoder geocoder;
+        Address endereco;
+        List<Address> enderecos;
+        geocoder = new Geocoder(getApplicationContext());
+        enderecos = geocoder.getFromLocationName(streetName, 5);
+        if (enderecos.size() > 0)
+            Log.i("LOG", "Endereços ---> " + String.valueOf(enderecos.size()));
+        endereco = enderecos.get(0);
+        return endereco;
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        if (googleApiClient != null && googleApiClient.isConnected())
+            startLocationUpdate();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (googleApiClient != null) {
+            stopLocationUpdate();
+        }
+    }
+
+    private void initLocationRequest() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    private void startLocationUpdate() {
+        initLocationRequest();
+        //LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+    }
+
+
+    private void stopLocationUpdate() {
+        //LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    }
+
+    @Override
+
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.i("LOG", "UpdateLocationActivity.onConnected(" + bundle + ")");
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            return;
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            startLocationUpdate();
+                        }
+                    }
+                });
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.i("LOG", "UpdateLocationActivity.onConnectionSuspended(" + i + ")");
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.i("LOG", "UpdateLocationActivity.onConnectionFailed(" + connectionResult + ")");
+
+    }
 
 }

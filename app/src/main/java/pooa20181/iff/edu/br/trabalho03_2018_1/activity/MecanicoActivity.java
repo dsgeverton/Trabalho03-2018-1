@@ -7,9 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-
 import java.util.List;
-
 import io.realm.Realm;
 import pooa20181.iff.edu.br.trabalho03_2018_1.R;
 import pooa20181.iff.edu.br.trabalho03_2018_1.adapter.ClickRecyclerViewListener;
@@ -26,7 +24,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
         setContentView(R.layout.activity_mecanico);
 
         realm = Realm.getDefaultInstance();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabMecanico);
+        FloatingActionButton fab = findViewById(R.id.fabMecanico);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -37,7 +35,7 @@ public class MecanicoActivity extends AppCompatActivity implements ClickRecycler
         });
     }
     private List<Mecanico> getMecanicos(){
-        return (List) realm.where(Mecanico.class).findAll();
+        return realm.where(Mecanico.class).findAll();
     }
     @Override
     public void onClick(Object object) {

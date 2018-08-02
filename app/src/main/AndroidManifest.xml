@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pooa20181.iff.edu.br.trabalho03_2018_1">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".util.ApplicationRealmConfig"
         android:allowBackup="true"
@@ -10,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyDNWSAAF-Z0-JgJsZcBH14gn89DffzTFUQ"/>
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +26,6 @@
         <activity android:name=".activity.OficinaActivity" />
         <activity android:name=".activity.MecanicoDetalhesActivity" />
         <activity android:name=".activity.OficinaDetalhesActivity"></activity>
-        <activity android:name=".util.GeoLocation" />
     </application>
 
 </manifest>

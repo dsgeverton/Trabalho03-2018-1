@@ -24,7 +24,7 @@ public class OficinaActivity extends AppCompatActivity implements ClickRecyclerV
         setContentView(R.layout.activity_oficina);
 
         realm = Realm.getDefaultInstance();
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fabOficina);
+        FloatingActionButton fab = findViewById(R.id.fabOficina);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

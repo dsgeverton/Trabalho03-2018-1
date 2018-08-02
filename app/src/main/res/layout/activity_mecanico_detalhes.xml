@@ -27,7 +27,7 @@
             android:layout_marginEnd="15dp"
             android:checked="false"
             android:splitTrack="false"
-            android:text="EDITAR"
+            android:text="@string/editar"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="15sp"
@@ -43,7 +43,7 @@
             android:layout_marginStart="13dp"
             android:background="#f00"
             android:padding="5dp"
-            android:text="Excluir"
+            android:text="@string/excluir"
             android:textColor="#fff"
             android:textSize="18sp" />
 
@@ -65,7 +65,7 @@
         <LinearLayout
             android:id="@+id/linearMecanico"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="vertical">
 
@@ -78,7 +78,7 @@
                 android:layout_marginTop="16dp"
                 android:ems="10"
                 android:gravity="center"
-                android:hint="Nome"
+                android:hint="@string/nome"
                 android:inputType="textPersonName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:ems="10"
-                android:hint="Função"
+                android:hint="@string/funcao"
                 android:inputType="textPersonName"
                 android:textAlignment="center" />
 
@@ -102,7 +102,7 @@
                 android:ems="10"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:hint="Data de Nascimento"
+                android:hint="@string/data_de_nascimento"
                 android:inputType="date"
                 android:textAlignment="center" />
 
@@ -114,7 +114,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Rua"
+                android:hint="@string/rua"
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -129,7 +129,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Bairro"
+                android:hint="@string/bairro"
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -144,7 +144,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Município"
+                android:hint="@string/municipio"
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -160,7 +160,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Latitude"
+                android:hint="@string/latitude"
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -175,13 +175,18 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:ems="10"
-                android:hint="Longitude"
+                android:hint="@string/longitude"
                 android:inputType="textPersonName"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 />
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapa"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
     </ScrollView>
@@ -194,7 +199,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:padding="20dp"
-        android:text="Salvar"
+        android:text="@string/salvar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
