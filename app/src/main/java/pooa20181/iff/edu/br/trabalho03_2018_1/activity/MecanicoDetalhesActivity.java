@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -39,6 +38,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -285,7 +285,6 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
         TextView excluir;
         ScrollView scroll;
         LinearLayout linear;
-        Fragment fragment;
     }
 
     public String getRandomHexString() {
@@ -342,13 +341,14 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
     public Address getEndereco(String streetName) throws IOException {
 
         Geocoder geocoder;
-        Address endereco;
+        Address endereco = null;
         List<Address> enderecos;
         geocoder = new Geocoder(getApplicationContext());
         enderecos = geocoder.getFromLocationName(streetName, 5);
-        if (enderecos.size() > 0)
+        if (enderecos.size() > 0) {
             Log.i("LOG", "Endereços ---> " + String.valueOf(enderecos.size()));
-        endereco = enderecos.get(0);
+            endereco = enderecos.get(0);
+        }
         return endereco;
     }
 

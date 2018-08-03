@@ -11,25 +11,20 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
-import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -42,9 +37,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+
 import io.realm.Realm;
 import pooa20181.iff.edu.br.trabalho03_2018_1.R;
 import pooa20181.iff.edu.br.trabalho03_2018_1.model.Oficina;
@@ -260,7 +257,7 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
     private static class ViewHolder{
         EditText nomeOficina, ruaOficina, bairroOficina, municipioOficina, latitudeOficina, longitudeOficina;
-        Button salvar, location;
+        Button salvar;
         Switch habilitarEdicao;
         TextView excluir;
         ScrollView scroll;
@@ -302,21 +299,18 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
             try {
                 Address endereco = getEndereco(mViewHolder.ruaOficina.getText().toString());
 
-                if (endereco == null){
-                    new AlertDialog.Builder(this).setTitle("Alerta").setMessage("O endereço não foi encontrado").setPositiveButton("OK", null);
-                } else {
-                    Log.i("LOG", "Atualizar " + endereco.getThoroughfare());
+                Log.i("LOG", "Atualizar " + endereco.getThoroughfare());
 
-                    for (int i = 0, tam = endereco.getMaxAddressLineIndex(); i < tam; i++) {
-                        resultAddress.append(endereco.getAddressLine(i));
-                        resultAddress.append(i < tam - 1 ? ", " : "");
-                        Log.i("LOG", "Result " + resultAddress);
-                    }
-                    mViewHolder.ruaOficina.setText(endereco.getThoroughfare());
-                    mViewHolder.municipioOficina.setText(endereco.getSubAdminArea());
-                    mViewHolder.latitudeOficina.setText(String.valueOf(endereco.getLatitude()));
-                    mViewHolder.longitudeOficina.setText(String.valueOf(endereco.getLongitude()));
+                for (int i = 0, tam = endereco.getMaxAddressLineIndex(); i < tam; i++) {
+                    resultAddress.append(endereco.getAddressLine(i));
+                    resultAddress.append(i < tam - 1 ? ", " : "");
+                    Log.i("LOG", "Result " + resultAddress);
                 }
+                mViewHolder.ruaOficina.setText(endereco.getThoroughfare());
+                mViewHolder.municipioOficina.setText(endereco.getSubAdminArea());
+                mViewHolder.latitudeOficina.setText(String.valueOf(endereco.getLatitude()));
+                mViewHolder.longitudeOficina.setText(String.valueOf(endereco.getLongitude()));
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
