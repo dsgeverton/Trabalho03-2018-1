@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="15dp"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+    android:background="#33be88">
 
     <TextView
         android:id="@+id/tvNomeOficina"
@@ -13,6 +14,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:textColor="#fff"
         android:text="@string/nome_aleatorio"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,6 +26,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvNomeOficina"
+        android:textColor="#fff"
         android:layout_centerHorizontal="true"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
