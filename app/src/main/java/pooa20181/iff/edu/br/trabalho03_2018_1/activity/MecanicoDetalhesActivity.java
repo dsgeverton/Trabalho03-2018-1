@@ -8,10 +8,12 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,6 +32,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.text.ParseException;
@@ -43,7 +51,7 @@ import pooa20181.iff.edu.br.trabalho03_2018_1.model.Mecanico;
 import pooa20181.iff.edu.br.trabalho03_2018_1.util.PermissionUtils;
 
 public class MecanicoDetalhesActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
+        GoogleApiClient.OnConnectionFailedListener, View.OnClickListener, OnMapReadyCallback {
 
     private ViewHolder mViewHolder = new ViewHolder();
     private Realm realm;
@@ -54,6 +62,7 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
 
     private GoogleApiClient googleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
+    private GoogleMap mMap;
 
     // permissions
     String[] permissoes = new String[]{
@@ -94,6 +103,11 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
             this.mViewHolder.habilitarEdicao.setSplitTrack(false);
             this.mViewHolder.excluir.setVisibility(View.INVISIBLE);
             this.mViewHolder.excluir.setClickable(false);
+
+        } else {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
         }
 
         povoate();
@@ -133,12 +147,44 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng addressLocation = new LatLng(Double.parseDouble(mViewHolder.latitudeMecanico.getText().toString()), Double.parseDouble(mViewHolder.longitudeMecanico.getText().toString()));
+        mMap.addMarker(new MarkerOptions().position(addressLocation).title("Marker in Address registered"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(addressLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addressLocation, 14.0f));
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Posição"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 550.0f));
+            }
+        });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            mMap.setMyLocationEnabled(true);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PermissionUtils.validate(this, 0, permissoes);
+            }
+        }
+    }
+
+    @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonSalvarMecanico) {
-                buscar();
-                atualizar();
-                finish();
+            buscar();
+            atualizar();
+            finish();
         }
 
         if (id == R.id.excluirMecanico) {
@@ -175,14 +221,12 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
 
     public void atualizar() {
 
-        if (mViewHolder.nomeMecanico.getText().toString().equals("") ||
+        if (    mViewHolder.nomeMecanico.getText().toString().equals("") ||
                 mViewHolder.ruaMecanico.getText().toString().equals("") ||
                 mViewHolder.funcaoMecanico.getText().toString().equals("") ||
                 mViewHolder.dataNascimentoMecanico.getText().toString().equals("") ||
                 mViewHolder.bairroMecanico.getText().toString().equals("") ||
-                mViewHolder.municipioMecanico.getText().toString().equals("") ||
-                mViewHolder.latitudeMecanico.getText().toString().equals("") ||
-                mViewHolder.longitudeMecanico.getText().toString().equals("")) {
+                mViewHolder.municipioMecanico.getText().toString().equals("")) {
             Toast.makeText(getApplicationContext(), "Existem campos em branco!", Toast.LENGTH_SHORT).show();
         } else {
             String token;
@@ -241,6 +285,7 @@ public class MecanicoDetalhesActivity extends AppCompatActivity implements Googl
         TextView excluir;
         ScrollView scroll;
         LinearLayout linear;
+        Fragment fragment;
     }
 
     public String getRandomHexString() {

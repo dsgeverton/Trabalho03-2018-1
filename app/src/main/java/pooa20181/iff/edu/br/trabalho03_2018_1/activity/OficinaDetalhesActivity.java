@@ -7,20 +7,27 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,6 +35,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import java.io.IOException;
 import java.util.List;
@@ -38,7 +51,7 @@ import pooa20181.iff.edu.br.trabalho03_2018_1.model.Oficina;
 import pooa20181.iff.edu.br.trabalho03_2018_1.util.PermissionUtils;
 
 public class OficinaDetalhesActivity extends AppCompatActivity implements View.OnClickListener,GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, OnMapReadyCallback {
 
     private ViewHolder mViewHolder = new ViewHolder();
     private Realm realm;
@@ -47,6 +60,7 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
     private GoogleApiClient googleApiClient;
     private FusedLocationProviderClient mFusedLocationClient;
+    private GoogleMap mMap;
 
     // permissions
     String[] permissoes = new String[]{
@@ -85,8 +99,11 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
             this.mViewHolder.habilitarEdicao.setSplitTrack(false);
             this.mViewHolder.excluir.setVisibility(View.INVISIBLE);
             this.mViewHolder.excluir.setClickable(false);
+        } else {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
         }
-
         povoate();
 
         this.mViewHolder.habilitarEdicao.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -100,7 +117,6 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
                     mViewHolder.municipioOficina.setEnabled(true);
                     mViewHolder.salvar.setEnabled(true);
                 } else {
-
                     buscar();
                     atualizar();
                     povoate();
@@ -112,6 +128,7 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
                 }
             }
         });
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         callConnection();
         PermissionUtils.validate(this, 0, permissoes);
@@ -120,12 +137,44 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
     }
 
     @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng addressLocation = new LatLng(Double.parseDouble(mViewHolder.latitudeOficina.getText().toString()), Double.parseDouble(mViewHolder.longitudeOficina.getText().toString()));
+        mMap.addMarker(new MarkerOptions().position(addressLocation).title("Marker in Address registered"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(addressLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(addressLocation, 14.0f));
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                mMap.addMarker(new MarkerOptions().position(latLng).title("Posição"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 550.0f));
+            }
+        });
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            mMap.setMyLocationEnabled(true);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                PermissionUtils.validate(this, 0, permissoes);
+            }
+        }
+
+    }
+
+    @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.buttonSalvarOficina){
             buscar();
             atualizar();
-            finish();
         }
 
         if (id == R.id.excluirOficina){
@@ -187,6 +236,8 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
             realm.copyToRealmOrUpdate(oficina);
             realm.commitTransaction();
             realm.close();
+
+            finish();
         }
     }
 
@@ -209,7 +260,7 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
     private static class ViewHolder{
         EditText nomeOficina, ruaOficina, bairroOficina, municipioOficina, latitudeOficina, longitudeOficina;
-        Button salvar;
+        Button salvar, location;
         Switch habilitarEdicao;
         TextView excluir;
         ScrollView scroll;
@@ -250,17 +301,22 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
 
             try {
                 Address endereco = getEndereco(mViewHolder.ruaOficina.getText().toString());
-                Log.i("LOG", "Atualizar " + endereco.getThoroughfare());
 
-                for (int i = 0, tam = endereco.getMaxAddressLineIndex(); i < tam; i++) {
-                    resultAddress.append(endereco.getAddressLine(i));
-                    resultAddress.append(i < tam - 1 ? ", " : "");
-                    Log.i("LOG", "Result " + resultAddress);
+                if (endereco == null){
+                    new AlertDialog.Builder(this).setTitle("Alerta").setMessage("O endereço não foi encontrado").setPositiveButton("OK", null);
+                } else {
+                    Log.i("LOG", "Atualizar " + endereco.getThoroughfare());
+
+                    for (int i = 0, tam = endereco.getMaxAddressLineIndex(); i < tam; i++) {
+                        resultAddress.append(endereco.getAddressLine(i));
+                        resultAddress.append(i < tam - 1 ? ", " : "");
+                        Log.i("LOG", "Result " + resultAddress);
+                    }
+                    mViewHolder.ruaOficina.setText(endereco.getThoroughfare());
+                    mViewHolder.municipioOficina.setText(endereco.getSubAdminArea());
+                    mViewHolder.latitudeOficina.setText(String.valueOf(endereco.getLatitude()));
+                    mViewHolder.longitudeOficina.setText(String.valueOf(endereco.getLongitude()));
                 }
-                mViewHolder.ruaOficina.setText(endereco.getThoroughfare());
-                mViewHolder.municipioOficina.setText(endereco.getSubAdminArea());
-                mViewHolder.latitudeOficina.setText(String.valueOf(endereco.getLatitude()));
-                mViewHolder.longitudeOficina.setText(String.valueOf(endereco.getLongitude()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -270,13 +326,14 @@ public class OficinaDetalhesActivity extends AppCompatActivity implements View.O
     public Address getEndereco(String streetName) throws IOException {
 
         Geocoder geocoder;
-        Address endereco;
+        Address endereco = null;
         List<Address> enderecos;
         geocoder = new Geocoder(getApplicationContext());
         enderecos = geocoder.getFromLocationName(streetName, 5);
-        if (enderecos.size() > 0)
+        if (enderecos.size() > 0){
             Log.i("LOG", "Endereços ---> " + String.valueOf(enderecos.size()));
-        endereco = enderecos.get(0);
+            endereco = enderecos.get(0);
+        }
         return endereco;
     }
 

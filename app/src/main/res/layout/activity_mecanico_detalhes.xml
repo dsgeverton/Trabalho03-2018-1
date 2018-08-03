@@ -178,6 +178,11 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
+            <include
+                layout="@layout/map"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
             <Button
                 android:id="@+id/buttonSalvarMecanico"
                 android:layout_width="150dp"

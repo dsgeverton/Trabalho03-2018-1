@@ -87,17 +87,13 @@
             <EditText
                 android:id="@+id/edtTextInfoRuaOficina"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:ems="10"
                 android:hint="Rua"
                 android:inputType="textPersonName"
-                android:textAlignment="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edtTextInfoNomeOficina" />
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/edtTextinfoBairroOficina"
@@ -161,6 +157,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edtTextInfoLatitudeOficina" />
 
+
+            <include
+                layout="@layout/map"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
             <Button
                 android:id="@+id/buttonSalvarOficina"
                 android:layout_width="150dp"
@@ -168,6 +170,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="30dp"
                 android:padding="20dp"
                 android:text="Salvar"
                 app:layout_constraintBottom_toBottomOf="parent"
